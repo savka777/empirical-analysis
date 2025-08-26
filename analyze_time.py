@@ -3,8 +3,9 @@ import time
 import functools
 import random
 import matplotlib.pyplot as plt
+from registers import FunctionAnalyzer
 
-def analyze_time(input_generator, sizes, runs=5):
+def analyze_time(sizes=None, runs=5):
     """
     Decorator for empirical time complexity analysis.
     
@@ -13,13 +14,27 @@ def analyze_time(input_generator, sizes, runs=5):
         sizes: List of input sizes to test
         runs: Number of runs per size (default 5)
     """
+    if sizes is None:
+        sizes = [100,200,400,800,1000]
+
     def decorator(func):
+
+        analyzer = FunctionAnalyzer()
+
+        try:
+            parameters = analyzer.analyze_function
+        except Exception as e:
+            print("DEBUG: Function analysis failed: " , e)
+            
+
         @functools.wraps(func)
         def wrapper(*args, **kwargs):
+
             # If called normally, just run the function
             if args or kwargs:
                 return func(*args, **kwargs)
 
+            print("DEBUG: Auto anyalyzing: ", func.__name__)
             results = []  # the time it takes to run on different input sizes
 
             # iterate through the different input sizes and call our func
@@ -34,9 +49,9 @@ def analyze_time(input_generator, sizes, runs=5):
                 # simple solution: run the analysis 5 iterations for each time. Take the minimum time 
                 # it takes for the function to execute.
                 for _ in range(runs):
-                    test_input = input_generator(size)  # generate test data for input size
+                    test_inputs = analyzer.generate_test_input(func, size) # generate test data for input size
                     start_time = time.perf_counter() 
-                    func(test_input)  # call function on input size
+                    func(*test_inputs)  # call function on input size
                     end_time = time.perf_counter()
                     times.append(end_time - start_time)
             

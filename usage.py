@@ -1,10 +1,10 @@
-from analyze_time import analyze_time, generate_list, plot_results, pretty_time
+from analyze_time import analyze_time, plot_results, pretty_time
 
 
 if __name__ == "__main__":
 
-    @analyze_time(generate_list, [100, 200, 400, 800], runs=5)
-    def bubble_sort(arr):
+    @analyze_time()
+    def bubble_sort(arr : list): # Import! Type hints must be used, so reccomend python >3.5
         n = len(arr)
         for i in range(n):
             for j in range(0, n-i-1):
@@ -17,9 +17,4 @@ if __name__ == "__main__":
     for size, time in results:
         print("Input size: ", size, "Time Taken: ", pretty_time(time) , "MS")
 
-    plot_results(results)
-
-    
-
-
-    
+    plot_results(results)   
