@@ -2,6 +2,7 @@ import inspect
 from dataclasses import dataclass
 import random
 from typing import Any, Callable, Dict, List, Optional, Union # Allows a variable to multiple types
+import string
 
 @dataclass
 class ParameterInfo:
@@ -22,6 +23,9 @@ class InputGeneratorRegistry:
     def register_default(self):
         """Add to Register dictionary"""
         self.register(list,self.generate_list)
+        self.register(str,self.generate_string)
+
+        # TODO: ADD graph, strings, trees, etc
 
     def register(self, type, generator):
         """Based on type, register appropriate generator"""
@@ -33,6 +37,9 @@ class InputGeneratorRegistry:
             l.append(random.randint(1,1000))
         
         return l;
+
+    def generate_string(self,size):
+        return ''.join(random.choices(string.ascii_lowercase, k = size))
 
     def can_generate(self, type):
         if type in self.generators: 
